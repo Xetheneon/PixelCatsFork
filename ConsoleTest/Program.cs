@@ -9,12 +9,12 @@ namespace ConsoleTest
         static void Main(string[] args)
         {
             Random random = new Random();
-            IDisplay display = new ConsoleDisplay();
+            IDisplay display = new ArduinoDisplay();
             IPixel[,] pixels = new IPixel[20, 10];
             while (true)
             {
-                Thread.Sleep(10);
-                display.DisplayInt(302, true);
+                Thread.Sleep(1);
+                display.DisplayInt(999999);
                 for (sbyte i = 0; i < 20; i++)
                 {
                     for (sbyte j = 0; j < 10; j++)

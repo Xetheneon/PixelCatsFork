@@ -10,7 +10,7 @@ namespace PixelBoard
         internal sbyte height = 20;
         internal sbyte width = 10;
 
-        internal sbyte framerate = 50;
+        internal sbyte framerate = 10;
 
         internal static System.Timers.Timer displayRefreshTimer;
 

@@ -428,7 +428,7 @@ namespace HerdingCats
                     UpdateFallingStuff();
 
                     Thread.Sleep(50);
-                    display.DisplayInt(score, true);
+                    display.DisplayInt(score);
                     display.Draw(board);
 
                     bool allCatsDead = true;
