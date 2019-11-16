@@ -8,7 +8,7 @@ using System.Timers;
 
 namespace PixelBoard
 {
-    class ArduinoDisplay : IDisplay
+    public class ArduinoDisplay : IDisplay
     {
         private static SerialPort serialPort = new SerialPort();
         private DisplayHelper dh = new DisplayHelper();
@@ -19,7 +19,7 @@ namespace PixelBoard
             {
                 try
                 {
-                    serialPort.PortName = "COM4";
+                    serialPort.PortName = "COM3";
                     serialPort.BaudRate = 115200;
                     serialPort.Open();
                 }
@@ -41,7 +41,10 @@ namespace PixelBoard
                 }
                 Thread.Sleep(1);
             }
-            
+
+            initBoard();
+            ElapsedEventHandler dtfr = drawToFramerate;
+            this.dh.makeTimer(dtfr);
         }
 
         public ArduinoDisplay(sbyte height, sbyte width, sbyte framerate = 50)
@@ -55,6 +58,7 @@ namespace PixelBoard
 
         private void initBoard()
         {
+            this.dh.currentBoard = new Pixel[this.dh.height, this.dh.width];
             for (sbyte i = 0; i < this.dh.height; i++)
             {
                 for (sbyte j = 0; j < this.dh.width; j++)
@@ -82,9 +86,9 @@ namespace PixelBoard
                     {
                         if (this.dh.lastBoard == null || !toDraw[i, j].Equals(this.dh.lastBoard[i, j]))
                         {
-                            stream[counter] = toDraw[Math.Abs(i - dh.height - 1), j].Red;
-                            stream[counter + 1] = toDraw[Math.Abs(i - dh.height - 1), j].Green;
-                            stream[counter + 2] = toDraw[Math.Abs(i - dh.height - 1), j].Blue;
+                            stream[counter] = toDraw[Math.Abs(i - dh.height + 1), j].Red;
+                            stream[counter + 1] = toDraw[Math.Abs(i - dh.height + 1), j].Green;
+                            stream[counter + 2] = toDraw[Math.Abs(i - dh.height + 1), j].Blue;
                             counter = counter + 3;
                             changed = true;
                         }
@@ -96,6 +100,7 @@ namespace PixelBoard
             {
                 stream[0] = Convert.ToByte('g');
                 serialPort.Write(stream, 0, 601);
+                //serialPort.
             }
 
 
@@ -104,16 +109,28 @@ namespace PixelBoard
             {
                 int outInteger = this.dh.currentLCDNumber;
                 this.dh.lastLCDNumber = outInteger;
-                byte[] LCDbytes = new byte[5];
-                LCDbytes[0] = Convert.ToByte('s');
-                byte[] intbytes = BitConverter.GetBytes(outInteger);
-                int count = 1;
-                foreach (byte b in intbytes)
+
+                string paddedNum = outInteger.ToString();
+                if (paddedNum.Length < 6)
                 {
-                    LCDbytes[count] = b;
+                    for (int i = 1; i < 6 - paddedNum.Length; i++)
+                    {
+                        paddedNum.Insert(0, "0");
+                    }
+
+                }
+
+                byte[] LCDbytes = new byte[7];
+                LCDbytes[0] = Convert.ToByte('s');
+                char[] intAsCharArray = paddedNum.ToCharArray();
+
+                int count = 1;
+                foreach (char c in intAsCharArray)
+                {
+                    LCDbytes[count] = Convert.ToByte(c);
                     count++;
                 }
-                serialPort.Write(LCDbytes, 0, 5);
+                serialPort.Write(LCDbytes, 0, 7);
             }
         }
 

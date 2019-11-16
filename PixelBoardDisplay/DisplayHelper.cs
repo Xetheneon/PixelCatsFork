@@ -111,7 +111,7 @@ namespace PixelBoard
             this.ValidateLCDValue(value, 999999, "value");
             if (leftAligned != null || leftAligned == true)
             {
-                while (value < 99999)
+                while (value < 99999 && value != 0)
                 {
                     value *= 10;
                 }

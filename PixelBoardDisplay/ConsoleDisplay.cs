@@ -80,9 +80,9 @@ namespace PixelBoard
                     this.dh.lastLCDNumber = this.dh.currentLCDNumber;
                     if (paddedNum.Length < 6)
                     {
-                        for (int i = 1; i < 6 - paddedNum.Length; i++)
+                        for (int i = 0; i < 6 - this.dh.currentLCDNumber.ToString().Length; i++)
                         {
-                            paddedNum.Insert(0, "0");
+                            paddedNum = paddedNum.Insert(0, "0");
                         }
 
                     }

@@ -415,7 +415,7 @@ namespace HerdingCats
                 }
             }
 
-            IDisplay display = new ConsoleDisplay();
+            IDisplay display = new ArduinoDisplay();
             while (true)
             {
                // state = State.GameOver;
@@ -428,7 +428,7 @@ namespace HerdingCats
                     UpdateFallingStuff();
 
                     Thread.Sleep(50);
-                    display.DisplayInt(score);
+                    display.DisplayInt(score, true);
                     display.Draw(board);
 
                     bool allCatsDead = true;
