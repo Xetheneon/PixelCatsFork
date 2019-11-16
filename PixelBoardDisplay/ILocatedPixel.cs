@@ -12,10 +12,10 @@ namespace PixelBoard
         /// <summary>
         /// Column (min 0, max 19)
         /// </summary>
-        sbyte Column { set; }
+        sbyte Column { set; get; }
         /// <summary>
         /// Row (min 0, max 9)
         /// </summary>
-        sbyte Row { set; }
+        sbyte Row { set; get; }
     }
 }

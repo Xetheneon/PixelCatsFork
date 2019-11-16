@@ -12,14 +12,14 @@ namespace PixelBoard
         /// <summary>
         /// O-255 Red LED Value
         /// </summary>
-        byte Red { set; }
+        byte Red { set; get; }
         /// <summary>
         /// O-255 Green LED Value
         /// </summary>
-        byte Green { set; }
+        byte Green { set; get; }
         /// <summary>
         /// O-255 Blue LED Value
         /// </summary>
-        byte Blue { set; } 
+        byte Blue { set; get; } 
     }
 }

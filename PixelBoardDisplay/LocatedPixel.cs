@@ -4,12 +4,11 @@ using System.Text;
 
 namespace PixelBoard
 {
-    class LocatedPixel : ILocatedPixel
+    public class LocatedPixel : Pixel, ILocatedPixel
     {
-        public sbyte Column { set => throw new NotImplementedException(); }
-        public sbyte Row { set => throw new NotImplementedException(); }
-        public byte Red { set => throw new NotImplementedException(); }
-        public byte Green { set => throw new NotImplementedException(); }
-        public byte Blue { set => throw new NotImplementedException(); }
+        public LocatedPixel(byte red, byte green, byte blue) : base(red, green, blue) { }
+        public sbyte Column { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public sbyte Row { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     }
 }

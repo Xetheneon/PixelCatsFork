@@ -10,10 +10,10 @@ namespace PixelBoard
     public interface IDisplay
     { 
         /// <summary>
-        /// Draw a 2D array of pixels. 2D array should be size [20,10]
+        /// Draw a 2D array of pixels.
         /// </summary>
-        /// <param name="pixels">Array of pixels to display. Max size [20,10]</param>
-        void Draw(IPixel[] pixels);
+        /// <param name="pixels">Array of pixels to display.</param>
+        void Draw(IPixel[,] pixels);
 
         /// <summary>
         /// Draw a single pixel on the board.
