@@ -322,11 +322,16 @@ namespace HerdingCats
                 }
             }
 
-            for(int laserIndex = Lasers.Count - 1; laserIndex >= 0; laserIndex--)
+            CheckLaserCollisions();
+        }
+
+        private static void CheckLaserCollisions()
+        {
+            for (int laserIndex = Lasers.Count - 1; laserIndex >= 0; laserIndex--)
             {
-                for(int fallerIndex = Falling.Count - 1; fallerIndex >= 0; fallerIndex--)
+                for (int fallerIndex = Falling.Count - 1; fallerIndex >= 0; fallerIndex--)
                 {
-                    if(Lasers[laserIndex].Bolt[0].Col == Falling[fallerIndex].Col &&
+                    if (Lasers[laserIndex].Bolt[0].Col == Falling[fallerIndex].Col &&
                         Lasers[laserIndex].Bolt[0].Row == Falling[fallerIndex].Row)
                     {
                         score++;
@@ -357,6 +362,8 @@ namespace HerdingCats
                 {
                     Falling[i].Row++;
                 }
+
+                CheckLaserCollisions();
             }
 
             if (spawnTimer.DoThing())
