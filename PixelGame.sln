@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29324.140
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PixelBoard", "PixelBoardDisplay\PixelBoard.csproj", "{3D824CF7-EA13-4066-92DA-47E18559165B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{AC85A2E3-BE2A-4B26-85BF-74BD1E019657}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{AC85A2E3-BE2A-4B26-85BF-74BD1E019657}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HerdingCats", "HerdingCats\HerdingCats.csproj", "{DAACC048-B3D2-46E4-AD16-8641760779EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AC85A2E3-BE2A-4B26-85BF-74BD1E019657}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC85A2E3-BE2A-4B26-85BF-74BD1E019657}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC85A2E3-BE2A-4B26-85BF-74BD1E019657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAACC048-B3D2-46E4-AD16-8641760779EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAACC048-B3D2-46E4-AD16-8641760779EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAACC048-B3D2-46E4-AD16-8641760779EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAACC048-B3D2-46E4-AD16-8641760779EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
