@@ -14,20 +14,9 @@ namespace PixelBoard
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr GetStdHandle(int handle);
 
-        private sbyte height = 20;
-        private sbyte width = 10;
+        private DisplayHelper dh = new DisplayHelper();
 
-        private sbyte framerate = 50;
-
-        private static System.Timers.Timer displayRefreshTimer;
-
-        private IPixel[,] lastBoard;
-        private IPixel[,] currentBoard;
-
-        private int lastLCDNumber = 0;
-        private int currentLCDNumber = 0;
-
-        private bool refreshing = false;
+        private bool refreshing = false;       
 
         /// <summary>
         /// Construct a display with the default size (20x10)
@@ -35,7 +24,8 @@ namespace PixelBoard
         public ConsoleDisplay()
         {
             initBoard();
-            makeTimer();
+            ElapsedEventHandler dtfr = drawToFramerate;
+            this.dh.makeTimer(dtfr);
         }
 
         /// <summary>
@@ -43,29 +33,17 @@ namespace PixelBoard
         /// </summary>
         public ConsoleDisplay(sbyte height, sbyte width, sbyte framerate = 50)
         {
-            if (framerate > 0 && framerate <= 60)
-            {
-                this.framerate = framerate;
-            }
-            else if (framerate > 60)
-            {
-                this.framerate = 60;
-            }
-            else
-            {
-                this.framerate = 1;
-            }
-
-            this.height = height;
-            this.width = width;
-
+            this.dh.SetFramerate(framerate);
+            this.dh.SetSize(height, width);
             initBoard();
-            makeTimer();
+
+            ElapsedEventHandler dtfr = drawToFramerate;
+            this.dh.makeTimer(dtfr);
         }
 
         private void initBoard()
         {
-            currentBoard = new Pixel[height, width];
+            this.dh.currentBoard = new Pixel[this.dh.height, this.dh.width];
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("000000");
 
@@ -74,9 +52,9 @@ namespace PixelBoard
             GetConsoleMode(handle, out mode);
             SetConsoleMode(handle, mode | 0x4);
 
-            for (sbyte i = 0; i < height; i++)
+            for (sbyte i = 0; i < this.dh.height; i++)
             {
-                for (sbyte j = 0; j < width; j++)
+                for (sbyte j = 0; j < this.dh.width; j++)
                 {
                         Console.Write(" ");
                         Console.Write("\x1b[38;2;" + 0 + ";" + 0 + ";" + 0 + "m" + "■");
@@ -85,27 +63,21 @@ namespace PixelBoard
             }
         }
 
-        private void makeTimer()
-        {
-            displayRefreshTimer = new System.Timers.Timer(1000 / this.framerate);
-            displayRefreshTimer.Elapsed += drawToFramerate;
-            displayRefreshTimer.AutoReset = true;
-            displayRefreshTimer.Enabled = true;
-        }
+
 
         private void drawToFramerate(Object source, ElapsedEventArgs e)
         {
             if (!refreshing)
             {
                 refreshing = true;
-                Pixel[,] toDraw = new Pixel[height,width];
-                Array.Copy(currentBoard, toDraw, currentBoard.Length);
+                Pixel[,] toDraw = new Pixel[this.dh.height, this.dh.width];
+                Array.Copy(this.dh.currentBoard, toDraw, this.dh.currentBoard.Length);
 
-                if (currentLCDNumber != lastLCDNumber)
+                if (this.dh.currentLCDNumber != this.dh.lastLCDNumber)
                 {
                     Console.SetCursorPosition(0, 0);
-                    string paddedNum = currentLCDNumber.ToString();
-                    lastLCDNumber = currentLCDNumber;
+                    string paddedNum = this.dh.currentLCDNumber.ToString();
+                    this.dh.lastLCDNumber = this.dh.currentLCDNumber;
                     if (paddedNum.Length < 6)
                     {
                         for (int i = 1; i < 6 - paddedNum.Length; i++)
@@ -118,14 +90,14 @@ namespace PixelBoard
                     Console.WriteLine(paddedNum);
                 }
 
-                for (sbyte i = 0; i < height; i++)
+                for (sbyte i = 0; i < this.dh.height; i++)
                 {
                     int spacer = 1;
-                    for (sbyte j = 0; j < width; j++)
+                    for (sbyte j = 0; j < this.dh.width; j++)
                     {
                         if (toDraw[i, j] != null)
                         {
-                            if (lastBoard == null || !toDraw[i,j].Equals(lastBoard[i,j]))
+                            if (this.dh.lastBoard == null || !toDraw[i,j].Equals(this.dh.lastBoard[i,j]))
                             {
                                 Console.SetCursorPosition(j + spacer, i + 1);
                                 Console.Write("\x1b[38;2;" + toDraw[i, j].Red + ";" + toDraw[i, j].Green + ";" + toDraw[i, j].Blue + "m" + "■");
@@ -134,97 +106,41 @@ namespace PixelBoard
                         spacer++;
                     }
                 }
-                if (Console.CursorTop != height + 1 && Console.CursorLeft != 0)
+                if (Console.CursorTop != this.dh.height + 1 && Console.CursorLeft != 0)
                 {
-                    Console.SetCursorPosition(0, height + 1);
+                    Console.SetCursorPosition(0, this.dh.height + 1);
                 }
-                lastBoard = toDraw;
+                this.dh.lastBoard = toDraw;
                 refreshing = false;
             }
         }
 
-        private void ValidateLCDValue(int value, int max, string argumentName)
-        {
-            if (value > max)
-            {
-                throw new ArgumentOutOfRangeException(argumentName, "Int to display was over 6 digits, which is not valid");
-            }
-            else if (value < 0)
-            {
-                throw new ArgumentOutOfRangeException(argumentName, "Int to display was negative, which is not valid");
-            }
-        }
+
 
         public void DisplayInt(int value)
         {
-            ValidateLCDValue(value, 999999, "value");
-            currentLCDNumber = value;
+            this.dh.DisplayInt(value);
 
         }
 
         public void DisplayInt(int value, bool? leftAligned)
         {
-            ValidateLCDValue(value, 999999, "value");
-            if (leftAligned != null || leftAligned == true)
-            {
-                while (value < 99999)
-                {
-                    value *= 10;
-                }
-            }
-            currentLCDNumber = value;
+            this.dh.DisplayInt(value, leftAligned);
         }
 
         public void DisplayInts(int leftValue, int rightValue)
         {
-            ValidateLCDValue(leftValue, 999, "leftValue");
-            ValidateLCDValue(rightValue, 999, "rightValue");
-
-            while (leftValue < 99999)
-            {
-                leftValue *= 10;
-            }
-            leftValue += rightValue;
-
-            currentLCDNumber = leftValue;
+            this.dh.DisplayInts(leftValue, rightValue);
         }
 
         public void Draw(IPixel[,] pixels)
         {
-            if (pixels.GetLength(0) == height)
-            {
-                if (pixels.GetLength(1) == width)
-                {
-                    currentBoard = pixels;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException("pixels", "pixels width was not the defined display width");
-                }
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("pixels", "pixels height was not the defined display height");
-            }
+            this.dh.Draw(pixels);
         }
 
         public void Draw(ILocatedPixel pixel)
         {
-            if (pixel.Column < width)
-            {
-                if (pixel.Row < height)
-                {
-                    currentBoard[pixel.Row, pixel.Column] = (IPixel)pixel;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException("pixel", "pixel row was not within the defined display height");
-                }
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("pixel", "pixel column was not within the defined display width");
-            }
+            this.dh.Draw(pixel);
         }
     }
 }
