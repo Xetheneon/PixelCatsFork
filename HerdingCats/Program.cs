@@ -215,6 +215,8 @@ namespace HerdingCats
 
         static void UpdateBackground()
         {
+
+
             for (int i = 0; i < board.GetLength(0); i++)
             {
                 for (int j = 0; j < board.GetLength(1); j++)
@@ -362,7 +364,12 @@ namespace HerdingCats
                 Coord faller = new Coord();
                 faller.Col = rng.Next(0, board.GetLength(1));
                 faller.Row = 0;
-                faller.Colour = new Pixel(0, 0, 0);
+                int i = rng.Next(9);
+                while (i == faller.Col)
+                {
+                    i = rng.Next(9);
+                }
+                faller.Colour = (Pixel)rainbow[i];
                 Falling.Add(faller);
             }
 
