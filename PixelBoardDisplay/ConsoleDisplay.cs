@@ -24,8 +24,8 @@ namespace PixelBoard
         private IPixel[,] lastBoard;
         private IPixel[,] currentBoard;
 
-        private short lastLCDNumber = 0;
-        private short currentLCDNumber = 0;
+        private int lastLCDNumber = 0;
+        private int currentLCDNumber = 0;
 
         private bool refreshing = false;
 
@@ -125,7 +125,7 @@ namespace PixelBoard
                     {
                         if (toDraw[i, j] != null)
                         {
-                            if (lastBoard == null || toDraw[i,j] != lastBoard[i,j])
+                            if (lastBoard == null || !toDraw[i,j].Equals(lastBoard[i,j]))
                             {
                                 Console.SetCursorPosition(j + spacer, i + 1);
                                 Console.Write("\x1b[38;2;" + toDraw[i, j].Red + ";" + toDraw[i, j].Green + ";" + toDraw[i, j].Blue + "m" + "■");
@@ -134,24 +134,59 @@ namespace PixelBoard
                         spacer++;
                     }
                 }
+                if (Console.CursorTop != height + 1 && Console.CursorLeft != 0)
+                {
+                    Console.SetCursorPosition(0, height + 1);
+                }
                 lastBoard = toDraw;
                 refreshing = false;
             }
         }
 
+        private void ValidateLCDValue(int value, int max, string argumentName)
+        {
+            if (value > max)
+            {
+                throw new ArgumentOutOfRangeException(argumentName, "Int to display was over 6 digits, which is not valid");
+            }
+            else if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(argumentName, "Int to display was negative, which is not valid");
+            }
+        }
+
         public void DisplayInt(int value)
         {
-            throw new NotImplementedException();
+            ValidateLCDValue(value, 999999, "value");
+            currentLCDNumber = value;
+
         }
 
         public void DisplayInt(int value, bool? leftAligned)
         {
-            throw new NotImplementedException();
+            ValidateLCDValue(value, 999999, "value");
+            if (leftAligned != null || leftAligned == true)
+            {
+                while (value < 99999)
+                {
+                    value *= 10;
+                }
+            }
+            currentLCDNumber = value;
         }
 
         public void DisplayInts(int leftValue, int rightValue)
         {
-            throw new NotImplementedException();
+            ValidateLCDValue(leftValue, 999, "leftValue");
+            ValidateLCDValue(rightValue, 999, "rightValue");
+
+            while (leftValue < 99999)
+            {
+                leftValue *= 10;
+            }
+            leftValue += rightValue;
+
+            currentLCDNumber = leftValue;
         }
 
         public void Draw(IPixel[,] pixels)
@@ -175,7 +210,21 @@ namespace PixelBoard
 
         public void Draw(ILocatedPixel pixel)
         {
-            throw new NotImplementedException();
+            if (pixel.Column < width)
+            {
+                if (pixel.Row < height)
+                {
+                    currentBoard[pixel.Row, pixel.Column] = (IPixel)pixel;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("pixel", "pixel row was not within the defined display height");
+                }
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("pixel", "pixel column was not within the defined display width");
+            }
         }
     }
 }

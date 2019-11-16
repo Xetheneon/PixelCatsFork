@@ -14,6 +14,7 @@ namespace ConsoleTest
             while (true)
             {
                 Thread.Sleep(10);
+                display.DisplayInt(302, true);
                 for (sbyte i = 0; i < 20; i++)
                 {
                     for (sbyte j = 0; j < 10; j++)
@@ -21,6 +22,7 @@ namespace ConsoleTest
                         pixels[i, j] = new Pixel((byte)random.Next(1, 256), (byte)random.Next(1, 256), (byte)random.Next(1, 256));
                     }
                 }
+
                 display.Draw(pixels);
             }
         }
