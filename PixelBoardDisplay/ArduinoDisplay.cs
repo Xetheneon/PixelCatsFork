@@ -10,40 +10,13 @@ namespace PixelBoard
 {
     public class ArduinoDisplay : IDisplay
     {
-        private static SerialPort serialPort = new SerialPort();
         private DisplayHelper dh = new DisplayHelper();
         private bool finishedStreaming = true;
+        private SerialPortManager SerialPortManager = new SerialPortManager();
 
         public ArduinoDisplay()
         {
-            while (!serialPort.IsOpen)
-            {
-                try
-                {
-                    serialPort.PortName = "COM3";
-                    serialPort.BaudRate = 115200;
-                    serialPort.WriteBufferSize = 606;
-                    serialPort.Open();
-                }
-                catch (UnauthorizedAccessException e)
-                {
-
-                }
-                catch (InvalidOperationException e)
-                {
-
-                }
-                catch (System.IO.IOException e)
-                {
-
-                }
-                catch (Exception e)
-                {
-
-                }
-                Thread.Sleep(1);
-            }
-
+            new ArduinoInput(SerialPortManager); // This line must be here to allow button presses
             initBoard();
             ElapsedEventHandler dtfr = drawToFramerate;
             this.dh.makeTimer(dtfr);
@@ -101,7 +74,7 @@ namespace PixelBoard
                     }
                 }
 
-                if (serialPort.BytesToWrite == 0)
+                if (SerialPortManager.SerialPort.BytesToWrite == 0)
                 {
                     int outInteger = this.dh.currentLCDNumber;
                     this.dh.lastLCDNumber = outInteger;
@@ -127,9 +100,9 @@ namespace PixelBoard
                     }
 
                     char[] delimiter = new char[1] { 's' };
-                    serialPort.Write(delimiter, 0, 1);
-                    serialPort.Write(LCDbytes, 0, 6);
-                    serialPort.Write(stream, 0, 600);
+                    SerialPortManager.SerialPort.Write(delimiter, 0, 1);
+                    SerialPortManager.SerialPort.Write(LCDbytes, 0, 6);
+                    SerialPortManager.SerialPort.Write(stream, 0, 600);
                 }
                 else
                 {
