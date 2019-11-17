@@ -441,7 +441,7 @@ namespace HerdingCats
                 }
             }
 
-            IDisplay display = new ArduinoDisplay();
+            IDisplay display = new ConsoleDisplay();
             while (true)
             {
                 state = State.Playing;
