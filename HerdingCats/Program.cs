@@ -400,6 +400,18 @@ namespace HerdingCats
                 }
 
                 CheckLaserCollisions();
+                for (int i = Falling.Count - 1; i >= 0; i--)
+                {
+                    if (Falling[i].Row == board.GetLength(0))
+                    {
+                        if (cats[Falling[i].Col] == 1)
+                        {
+                            cats[Falling[i].Col] = 0;
+                        }
+
+                        Falling.RemoveAt(i);
+                    }
+                }
 
                 foreach (Coord c in Falling)
                 {
@@ -421,18 +433,7 @@ namespace HerdingCats
                 Falling.Add(faller);
             }
 
-            for(int i = Falling.Count - 1; i >= 0; i--)
-            {
-                if(Falling[i].Row == board.GetLength(0))
-                {
-                    if(cats[Falling[i].Col] == 1)
-                    {
-                        cats[Falling[i].Col] = 0;
-                    }
-
-                    Falling.RemoveAt(i);
-                }
-            }
+            
         }
 
         static FrameTimer titleScrollTimer = new FrameTimer(3000);
