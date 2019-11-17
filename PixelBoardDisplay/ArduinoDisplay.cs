@@ -12,6 +12,7 @@ namespace PixelBoard
     {
         private static SerialPort serialPort = new SerialPort();
         private DisplayHelper dh = new DisplayHelper();
+        private bool finishedStreaming = true;
 
         public ArduinoDisplay()
         {
@@ -21,6 +22,7 @@ namespace PixelBoard
                 {
                     serialPort.PortName = "COM3";
                     serialPort.BaudRate = 115200;
+                    serialPort.WriteBufferSize = 606;
                     serialPort.Open();
                 }
                 catch (UnauthorizedAccessException e)
@@ -70,68 +72,72 @@ namespace PixelBoard
 
         private void drawToFramerate(Object source, ElapsedEventArgs e)
         {
-            Pixel[,] toDraw = new Pixel[this.dh.height, this.dh.width];
-            Array.Copy(this.dh.currentBoard, toDraw, this.dh.currentBoard.Length);
-
-            byte[] stream = new byte[601];
-
-            bool changed = false;
-
-            int counter = 1;
-            for (sbyte i = 0; i < this.dh.height; i++)
+            if (finishedStreaming)
             {
-                for (sbyte j = 0; j < this.dh.width; j++)
+                finishedStreaming = false;
+                Pixel[,] toDraw = new Pixel[this.dh.height, this.dh.width];
+                Array.Copy(this.dh.currentBoard, toDraw, this.dh.currentBoard.Length);
+
+                byte[] stream = new byte[600];
+
+                bool changed = false;
+
+                int counter = 0;
+                for (sbyte i = 0; i < this.dh.height; i++)
                 {
-                    if (toDraw[i, j] != null)
+                    for (sbyte j = 0; j < this.dh.width; j++)
                     {
-                        if (this.dh.lastBoard == null || !toDraw[i, j].Equals(this.dh.lastBoard[i, j]))
+                        if (toDraw[i, j] != null)
                         {
-                            stream[counter] = toDraw[Math.Abs(i - dh.height + 1), j].Red;
-                            stream[counter + 1] = toDraw[Math.Abs(i - dh.height + 1), j].Green;
-                            stream[counter + 2] = toDraw[Math.Abs(i - dh.height + 1), j].Blue;
-                            counter = counter + 3;
-                            changed = true;
+                            if (this.dh.lastBoard == null || !toDraw[i, j].Equals(this.dh.lastBoard[i, j]))
+                            {
+                                stream[counter] = toDraw[Math.Abs(i - dh.height + 1), j].Red;
+                                stream[counter + 1] = toDraw[Math.Abs(i - dh.height + 1), j].Green;
+                                stream[counter + 2] = toDraw[Math.Abs(i - dh.height + 1), j].Blue;
+                                counter = counter + 3;
+                                changed = true;
+                            }
                         }
                     }
                 }
-            }
 
-            if (changed)
-            {
-                stream[0] = Convert.ToByte('g');
-                serialPort.Write(stream, 0, 601);
-                //serialPort.
-            }
-
-
-
-            if (this.dh.currentLCDNumber != this.dh.lastLCDNumber)
-            {
-                int outInteger = this.dh.currentLCDNumber;
-                this.dh.lastLCDNumber = outInteger;
-
-                string paddedNum = outInteger.ToString();
-                if (paddedNum.Length < 6)
+                if (serialPort.BytesToWrite == 0)
                 {
-                    for (int i = 1; i < 6 - paddedNum.Length; i++)
+                    int outInteger = this.dh.currentLCDNumber;
+                    this.dh.lastLCDNumber = outInteger;
+
+                    string paddedNum = outInteger.ToString();
+                    if (paddedNum.Length < 6)
                     {
-                        paddedNum.Insert(0, "0");
+                        for (int i = 0; i < 6 - outInteger.ToString().Length; i++)
+                        {
+                            paddedNum.Insert(0, "0");
+                        }
+
                     }
 
+                    byte[] LCDbytes = new byte[6];
+                    char[] intAsCharArray = paddedNum.ToCharArray();
+
+                    int count = 0;
+                    foreach (char c in intAsCharArray)
+                    {
+                        LCDbytes[count] = Convert.ToByte(c);
+                        count++;
+                    }
+
+                    char[] delimiter = new char[1] { 's' };
+                    serialPort.Write(delimiter, 0, 1);
+                    serialPort.Write(LCDbytes, 0, 6);
+                    serialPort.Write(stream, 0, 600);
                 }
-
-                byte[] LCDbytes = new byte[7];
-                LCDbytes[0] = Convert.ToByte('s');
-                char[] intAsCharArray = paddedNum.ToCharArray();
-
-                int count = 1;
-                foreach (char c in intAsCharArray)
+                else
                 {
-                    LCDbytes[count] = Convert.ToByte(c);
-                    count++;
+
                 }
-                serialPort.Write(LCDbytes, 0, 7);
+                finishedStreaming = true;
             }
+
         }
 
         public void DisplayInt(int value)
