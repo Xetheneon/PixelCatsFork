@@ -290,7 +290,6 @@ namespace HerdingCats
         static void UpdateBat()
         {
             int batRow = board.GetLength(0) - 2;
-            board[batRow, bat.Col] = background[batRow, bat.Col];
 
             bat.framesTillShoot = bat.framesTillShoot > 0 ? bat.framesTillShoot - 1 : 0;
 
@@ -301,10 +300,14 @@ namespace HerdingCats
                 switch (ch)
                 {
                     case 'a':
+                        board[batRow, bat.Col] = background[batRow, bat.Col];
                         bat.Col = bat.Col != 0 ? bat.Col - 1 : 0;
+                        board[batRow, bat.Col] = new Pixel(255, 255, 255);
                         break;
                     case 'd':
+                        board[batRow, bat.Col] = background[batRow, bat.Col];
                         bat.Col = bat.Col != 9 ? bat.Col + 1 : 9;
+                        board[batRow, bat.Col] = new Pixel(255, 255, 255);
                         break;
                     case 's':
                         if (bat.framesTillShoot <= 0)
@@ -317,14 +320,17 @@ namespace HerdingCats
                         break;
                 }
             }
-
-            board[batRow, bat.Col] = new Pixel(255, 255, 255);
         }
 
         static void UpdateLasers()
         {
             foreach (Laser l in Lasers)
             {
+                if (l.Bolt[3].Row < board.GetLength(0) - 2 && l.Bolt[3].Row >= 0)
+                {
+                    board[l.Bolt[3].Row, l.Bolt[3].Col] = background[l.Bolt[3].Row, l.Bolt[3].Col];
+                }
+
                 for (int i = 0; i < l.Bolt.Length; i++)
                 {
                     l.Bolt[i].Row--;
@@ -336,7 +342,7 @@ namespace HerdingCats
             {
                 foreach (Coord c in l.Bolt)
                 {
-                    if (c.Row < board.GetLength(0) && c.Row >= 0)
+                    if (c.Row < board.GetLength(0) - 2 && c.Row >= 0)
                     {
                         board[c.Row, c.Col] = c.Colour;
                     }
@@ -367,6 +373,14 @@ namespace HerdingCats
                                 dropTimer.ModifyPeriod(-1);
                             }
                         }
+                        for (int i = 0; i < Lasers[laserIndex].Bolt.Length; i++)
+                        {
+                            Laser l = Lasers[laserIndex];
+                            if (l.Bolt[i].Row < board.GetLength(0) && l.Bolt[i].Row >= 0)
+                            {
+                                board[l.Bolt[i].Row, l.Bolt[i].Col] = background[l.Bolt[i].Row, l.Bolt[i].Col];
+                            }
+                        }
                         Lasers.RemoveAt(laserIndex);
                         Falling.RemoveAt(fallerIndex);
                         break;
@@ -381,10 +395,16 @@ namespace HerdingCats
             {
                 for (int i = 0; i < Falling.Count; i++)
                 {
+                    board[Falling[i].Row, Falling[i].Col] = background[Falling[i].Row, Falling[i].Col];
                     Falling[i].Row++;
                 }
 
                 CheckLaserCollisions();
+
+                foreach (Coord c in Falling)
+                {
+                    board[c.Row, c.Col] = c.Colour;
+                }
             }
 
             if (spawnTimer.DoThing())
@@ -412,11 +432,6 @@ namespace HerdingCats
 
                     Falling.RemoveAt(i);
                 }
-            }
-
-            foreach(Coord c in Falling)
-            {
-                board[c.Row, c.Col] = c.Colour;
             }
         }
 
@@ -477,6 +492,8 @@ namespace HerdingCats
                     case 'a':
                     case 'd':
                     case 's':
+                        UpdateBackground();
+                        board[board.GetLength(0) - 2, bat.Col] = new Pixel(255, 255, 255);
                         state = State.Playing;
                         break;
                 }
@@ -553,7 +570,6 @@ namespace HerdingCats
             {
                 if (state == State.Playing)
                 {
-                    UpdateBackground();
                     UpdateCats();
                     UpdateLasers();
                     UpdateBat();
