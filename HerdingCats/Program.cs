@@ -528,8 +528,16 @@ namespace HerdingCats
             {
                 for (int j = 0; j < background.GetLength(1); j++)
                 {
-                    background[i, j] = dullerRainbow[j];
-                    board[i, j] = dullerRainbow[j];
+                    if (i < background.GetLength(0) - 2)
+                    {
+                        background[i, j] = dullerRainbow[j];
+                        board[i, j] = dullerRainbow[j];
+                    }
+                    else
+                    {
+                        background[i, j] = new Pixel(0,0,0);
+                        board[i, j] = new Pixel(0, 0, 0);
+                    }                
                 }
             }
 
