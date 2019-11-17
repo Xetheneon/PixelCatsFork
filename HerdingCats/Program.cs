@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using PixelBoard;
 
@@ -11,6 +12,8 @@ namespace HerdingCats
         public static State state = State.Playing;
         public static IPixel[,] board = new IPixel[20, 10];
         public static IPixel[,] background = new IPixel[20, 10];
+        public static IPixel[,] title = null;
+        public static IPixel[,] gameOver = null;
         public static Random rng = new Random();
 
 
@@ -21,7 +24,6 @@ namespace HerdingCats
                 new Pixel(35, 169, 204), new Pixel(2, 82, 141),
                 new Pixel(151, 14, 128), new Pixel(236, 19, 132) };
 
-
         public static IPixel[] dullRainbow =
         {
                 new Pixel(127, 0, 1), new Pixel(140, 58, 0),
@@ -29,6 +31,15 @@ namespace HerdingCats
                 new Pixel(89, 114, 0), new Pixel(19, 93, 41),
                 new Pixel(19, 93, 112), new Pixel(1, 45, 78),
                 new Pixel(83, 8, 70), new Pixel(130, 10, 73)
+        };
+
+        public static IPixel[] dullerRainbow =
+        {
+                new Pixel(44, 0, 0), new Pixel(49, 20, 0),
+                new Pixel(49, 30, 1), new Pixel(49, 42, 17),
+                new Pixel(31, 40, 0), new Pixel(7, 33, 14),
+                new Pixel(7, 33, 39), new Pixel(0, 16, 27),
+                new Pixel(29, 3, 24), new Pixel(45, 4, 26)
         };
 
         static int score = 0;
@@ -113,6 +124,7 @@ namespace HerdingCats
 
         static FrameTimer spawnTimer = new FrameTimer(45);
         static FrameTimer dropTimer = new FrameTimer(30);
+        static FrameTimer catTimer = new FrameTimer(60);
 
         #region
         
@@ -234,27 +246,30 @@ namespace HerdingCats
 
         static void UpdateCats()
         {
-            for (int i = 0; i < cats.Length; i++)
+            if(catTimer.DoThing())
             {
-                if (cats[i] != 0)
+                for (int i = 0; i < cats.Length; i++)
                 {
-                    int move = rng.Next(3);
-                    switch (move)
+                    if (cats[i] != 0)
                     {
-                        case 1:
-                            if (i > 0 && cats[i - 1] == 0)
-                            {
-                                cats[i - 1] = 1;
-                                cats[i] = 0;
-                            }
-                            break;
-                        case 2:
-                            if (i != 9 && cats[i + 1] == 0)
-                            {
-                                cats[i + 1] = 1;
-                                cats[i] = 0;
-                            }
-                            break;
+                        int move = rng.Next(3);
+                        switch (move)
+                        {
+                            case 1:
+                                if (i > 0 && cats[i - 1] == 0)
+                                {
+                                    cats[i - 1] = 1;
+                                    cats[i] = 0;
+                                }
+                                break;
+                            case 2:
+                                if (i != 9 && cats[i + 1] == 0)
+                                {
+                                    cats[i + 1] = 1;
+                                    cats[i] = 0;
+                                }
+                                break;
+                        }
                     }
                 }
             }
@@ -267,7 +282,7 @@ namespace HerdingCats
                 }
                 else
                 {
-                    board[board.GetLength(0) - 1, i] = new Pixel(255, 0, 0);
+                    board[board.GetLength(0) - 1, i] = new Pixel(0, 0, 0);
                 }
             }
         }
@@ -405,46 +420,137 @@ namespace HerdingCats
             }
         }
 
-        static FrameTimer titleScrollTimer = new FrameTimer(40000);
+        static FrameTimer titleScrollTimer = new FrameTimer(3000);
 
         static int titleOffset = 0;
 
-        static void ScrollTitle()
+        static void ReadBMP(string pFileName, ref IPixel[,] array)
         {
-            //if (titleScrollTimer.DoThing())
-            //{
-            //    titleOffset += 1;
+            StreamReader reader = new StreamReader(pFileName);
 
-            //    if (titleOffset > title.GetLength(1) - 10)
-            //    {
-            //        titleOffset = 0;
-            //    }
-            //}
+            string line = reader.ReadLine();
+            string[] values = line.Split(',');
+            
+            int w = int.Parse(values[0]);
+            int h = int.Parse(values[1]);
 
-            //for(int i = 0; i < 20; i++)
-            //{
-            //    for(int j = 0; j < 10; j++)
-            //    {
-            //        board[i, j] = title[i, j + titleOffset];
-            //    }
-            //}
+            array = new IPixel[w, h];
+
+            for(int i = 0; i < array.GetLength(1); i++)
+            {
+                for(int j = 0; j < array.GetLength(0); j++)
+                {
+                    values = reader.ReadLine().Split(',');
+                    array[j, i] = new Pixel(byte.Parse(values[0]), byte.Parse(values[1]), byte.Parse(values[2]));
+                }
+            }
+
+            reader.Close();
+        }
+
+        static void UpdateTitle()
+        {
+            if (titleScrollTimer.DoThing())
+            {
+                titleOffset += 1;
+
+                if (titleOffset > title.GetLength(0) - 10)
+                {
+                    titleOffset = 0;
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    board[j, i] = title[i + titleOffset, j];
+                }
+            }
+
+            while (Console.KeyAvailable)
+            {
+                char ch = Console.ReadKey(true).KeyChar;
+
+                switch (ch)
+                {
+                    case 'a':
+                    case 'd':
+                    case 's':
+                        state = State.Playing;
+                        break;
+                }
+            }
+        }
+
+        public static void UpdateGameOver()
+        {
+            if (titleScrollTimer.DoThing())
+            {
+                titleOffset += 1;
+
+                if (titleOffset > gameOver.GetLength(0) - 10)
+                {
+                    titleOffset = 0;
+                    titleScrollTimer = new FrameTimer(3000);
+                    state = State.Title;
+                }
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    board[j, i] = gameOver[i + titleOffset, j];
+                }
+            }
+
+            while (Console.KeyAvailable)
+            {
+                char ch = Console.ReadKey(true).KeyChar;
+
+                switch (ch)
+                {
+                    case 'a':
+                    case 'd':
+                    case 's':
+                        titleOffset = 0;
+                        titleScrollTimer = new FrameTimer(3000);
+                        state = State.Title;
+                        break;
+                }
+            }
         }
 
         static void Main(string[] args)
         {
+
+            ReadBMP("title.txt", ref title);
+            ReadBMP("gameOver.txt", ref gameOver);
+
             for (int i = 0; i < background.GetLength(0); i++)
             {
                 for (int j = 0; j < background.GetLength(1); j++)
                 {
-                    background[i, j] = dullRainbow[j];
-                    board[i, j] = dullRainbow[j];
+                    if (i < background.GetLength(0) - 2)
+                    {
+                        background[i, j] = dullerRainbow[j];
+                        board[i, j] = dullerRainbow[j];
+                    }
+                    else
+                    {
+                        background[i, j] = new Pixel(0,0,0);
+                        board[i, j] = new Pixel(0, 0, 0);
+                    }                
                 }
             }
 
             IDisplay display = new ConsoleDisplay();
+
+            state = State.Title;
+
             while (true)
             {
-                state = State.Playing;
                 if (state == State.Playing)
                 {
                     UpdateBackground();
@@ -463,7 +569,6 @@ namespace HerdingCats
                     }
 
                     display.DisplayInts(catsAlive, score);
-                    display.Draw(board);
 
                     bool allCatsDead = true;
 
@@ -483,13 +588,13 @@ namespace HerdingCats
                 }
                 else if(state == State.Title)
                 {
-                    ScrollTitle();
-                    display.Draw(board);
+                    UpdateTitle();
                 }
                 else if(state == State.GameOver)
                 {
-
+                    UpdateGameOver();
                 }
+                display.Draw(board);
             }
         }
     }
