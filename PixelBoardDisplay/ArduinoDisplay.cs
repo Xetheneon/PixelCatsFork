@@ -14,6 +14,8 @@ namespace PixelBoard
         private bool finishedStreaming = true;
         private SerialPortManager SerialPortManager = new SerialPortManager();
 
+        private const string streamMode = "normal"; // options: normal, partial - this should be moved to config file
+
         public ArduinoDisplay()
         {
             new ArduinoInput(SerialPortManager); // This line must be here to allow button presses
@@ -62,29 +64,27 @@ namespace PixelBoard
                     {
                         if (toDraw[i, j] != null)
                         {
-                            if (this.dh.lastBoard == null || !toDraw[i, j].Equals(this.dh.lastBoard[i, j]))
-                            {
-                                stream[counter] = toDraw[Math.Abs(i - dh.height + 1), j].Red;
-                                stream[counter + 1] = toDraw[Math.Abs(i - dh.height + 1), j].Green;
-                                stream[counter + 2] = toDraw[Math.Abs(i - dh.height + 1), j].Blue;
-                                counter = counter + 3;
-                                changed = true;
-                            }
+                            stream[counter] = toDraw[Math.Abs(i - dh.height + 1), j].Red;
+                            stream[counter + 1] = toDraw[Math.Abs(i - dh.height + 1), j].Green;
+                            stream[counter + 2] = toDraw[Math.Abs(i - dh.height + 1), j].Blue;
+                            counter = counter + 3;
+                            changed = true;
+
                         }
                     }
                 }
 
-                if (SerialPortManager.SerialPort.BytesToWrite == 0)
+                if (streamMode == "normal")
                 {
-                    int outInteger = this.dh.currentLCDNumber;
-                    this.dh.lastLCDNumber = outInteger;
+                    string outScore = this.dh.currentLCDNumber;
+                    this.dh.lastLCDNumber = outScore;
 
-                    string paddedNum = outInteger.ToString();
+                    string paddedNum = outScore.ToString();
                     if (paddedNum.Length < 6)
                     {
-                        for (int i = 0; i < 6 - outInteger.ToString().Length; i++)
+                        for (int i = 0; i < 6 - outScore.ToString().Length; i++)
                         {
-                            paddedNum.Insert(0, "0");
+                            paddedNum.Insert(0, " ");
                         }
 
                     }
@@ -104,9 +104,9 @@ namespace PixelBoard
                     SerialPortManager.SerialPort.Write(LCDbytes, 0, 6);
                     SerialPortManager.SerialPort.Write(stream, 0, 600);
                 }
-                else
+                else if(streamMode == "partial")
                 {
-
+                    // TODO: Send partial update
                 }
                 finishedStreaming = true;
             }
