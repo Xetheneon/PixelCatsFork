@@ -563,7 +563,7 @@ namespace HerdingCats
                 }
             }
 
-            IDisplay display = new ConsoleDisplay();
+            IDisplay display = new ArduinoDisplay();
 
             state = State.Title;
 
@@ -612,10 +612,6 @@ namespace HerdingCats
                     UpdateGameOver();
                 }
                 display.Draw(board);
-                if(!Pixel.Equals(board[18,5],new Pixel(255,255,255)))
-                {
-
-                }
             }
         }
     }
