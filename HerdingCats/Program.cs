@@ -432,9 +432,8 @@ namespace HerdingCats
                 }
                 faller.Colour = (Pixel)brightRainbow[i];
                 Falling.Add(faller);
+                board[faller.Row, faller.Col] = faller.Colour;
             }
-
-            
         }
 
         static FrameTimer titleScrollTimer = new FrameTimer(3000);
