@@ -16,9 +16,9 @@ namespace PixelBoard
 
         internal IPixel[,] lastBoard;
         internal IPixel[,] currentBoard;
-
-        internal int lastLCDNumber = 0;
-        internal int currentLCDNumber = 0;
+        
+        internal string lastLCDNumber = "";
+        internal string currentLCDNumber = "";
 
         internal void SetFramerate(sbyte framerate)
         {
@@ -103,20 +103,22 @@ namespace PixelBoard
         internal void DisplayInt(int value)
         {
             this.ValidateLCDValue(value, 999999, "value");
-            this.currentLCDNumber = value;
+            this.currentLCDNumber = value.ToString(); ;
         }
 
         internal void DisplayInt(int value, bool? leftAligned)
         {
             this.ValidateLCDValue(value, 999999, "value");
+            string paddedValue = value.ToString();
             if (leftAligned != null || leftAligned == true)
             {
                 while (value < 99999 && value != 0)
                 {
                     value *= 10;
+                    paddedValue += " ";
                 }
             }
-            this.currentLCDNumber = value;
+            this.currentLCDNumber = paddedValue;
         }
 
         internal void DisplayInts(int leftValue, int rightValue)
@@ -124,13 +126,30 @@ namespace PixelBoard
             this.ValidateLCDValue(leftValue, 999, "leftValue");
             this.ValidateLCDValue(rightValue, 999, "rightValue");
 
-            while (leftValue < 99999)
+            string paddedLeft = leftValue.ToString();
+            string paddedRight = rightValue.ToString();
+
+            while (leftValue < 99 && leftValue != 0)
             {
                 leftValue *= 10;
+                paddedLeft += " ";
+            }
+            while (rightValue < 99 && rightValue != 0)
+            {
+                rightValue *= 10;
+                paddedRight = " " + paddedRight;
+            }
+            if(leftValue == 0)
+            {
+                paddedLeft = "0  ";
+            }
+            if (rightValue == 0)
+            {
+                paddedRight = "  0";
             }
             leftValue += rightValue;
 
-            this.currentLCDNumber = leftValue;
+            this.currentLCDNumber = paddedLeft + paddedRight;
         }
     }
 }
