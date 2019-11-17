@@ -302,12 +302,12 @@ namespace HerdingCats
                     case 'a':
                         board[batRow, bat.Col] = background[batRow, bat.Col];
                         bat.Col = bat.Col != 0 ? bat.Col - 1 : 0;
-                        board[batRow, bat.Col] = new Pixel(255, 255, 255);
+                        //board[batRow, bat.Col] = new Pixel(255, 255, 255);
                         break;
                     case 'd':
                         board[batRow, bat.Col] = background[batRow, bat.Col];
                         bat.Col = bat.Col != 9 ? bat.Col + 1 : 9;
-                        board[batRow, bat.Col] = new Pixel(255, 255, 255);
+                        //board[batRow, bat.Col] = new Pixel(255, 255, 255);
                         break;
                     case 's':
                         if (bat.framesTillShoot <= 0)
@@ -320,6 +320,7 @@ namespace HerdingCats
                         break;
                 }
             }
+            board[batRow, bat.Col] = new Pixel(255, 255, 255);
         }
 
         static void UpdateLasers()
@@ -573,8 +574,8 @@ namespace HerdingCats
                 {
                     UpdateCats();
                     UpdateLasers();
-                    UpdateBat();
                     UpdateFallingStuff();
+                    UpdateBat();
 
                     Thread.Sleep(50);
 
