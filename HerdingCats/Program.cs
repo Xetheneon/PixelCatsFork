@@ -535,7 +535,7 @@ namespace HerdingCats
 
             IDisplay display = new ConsoleDisplay();
 
-            state = State.GameOver;
+            state = State.Title;
 
             while (true)
             {
