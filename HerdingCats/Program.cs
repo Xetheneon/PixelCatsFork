@@ -124,6 +124,7 @@ namespace HerdingCats
 
         static FrameTimer spawnTimer = new FrameTimer(45);
         static FrameTimer dropTimer = new FrameTimer(30);
+        static FrameTimer catTimer = new FrameTimer(60);
 
         #region
         
@@ -245,27 +246,30 @@ namespace HerdingCats
 
         static void UpdateCats()
         {
-            for (int i = 0; i < cats.Length; i++)
+            if(catTimer.DoThing())
             {
-                if (cats[i] != 0)
+                for (int i = 0; i < cats.Length; i++)
                 {
-                    int move = rng.Next(3);
-                    switch (move)
+                    if (cats[i] != 0)
                     {
-                        case 1:
-                            if (i > 0 && cats[i - 1] == 0)
-                            {
-                                cats[i - 1] = 1;
-                                cats[i] = 0;
-                            }
-                            break;
-                        case 2:
-                            if (i != 9 && cats[i + 1] == 0)
-                            {
-                                cats[i + 1] = 1;
-                                cats[i] = 0;
-                            }
-                            break;
+                        int move = rng.Next(3);
+                        switch (move)
+                        {
+                            case 1:
+                                if (i > 0 && cats[i - 1] == 0)
+                                {
+                                    cats[i - 1] = 1;
+                                    cats[i] = 0;
+                                }
+                                break;
+                            case 2:
+                                if (i != 9 && cats[i + 1] == 0)
+                                {
+                                    cats[i + 1] = 1;
+                                    cats[i] = 0;
+                                }
+                                break;
+                        }
                     }
                 }
             }
