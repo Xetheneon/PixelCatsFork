@@ -563,7 +563,7 @@ namespace HerdingCats
                 }
             }
 
-            IDisplay display = new ArduinoDisplay();
+            IDisplay display = new ConsoleDisplay();//new ArduinoDisplay();
 
             state = State.Title;
 
