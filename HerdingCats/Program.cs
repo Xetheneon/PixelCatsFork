@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Microsoft.Extensions.Configuration;
 using PixelBoard;
 
 namespace HerdingCats
 {
     class Program
     {
+        public static IConfiguration _config = null;
+
         public enum State { Title, Playing, GameOver };
         public static State state = State.Playing;
         public static IPixel[,] board = new IPixel[20, 10];
@@ -542,6 +545,10 @@ namespace HerdingCats
 
         static void Main(string[] args)
         {
+            _config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .Build();
+            var useEmulator = bool.Parse(_config.GetValue(Type.GetType("System.String"), "UseEmulator").ToString());
 
             ReadBMP("title.txt", ref title);
             ReadBMP("gameOver.txt", ref gameOver);
@@ -563,7 +570,11 @@ namespace HerdingCats
                 }
             }
 
-            IDisplay display = new ConsoleDisplay();//new ArduinoDisplay();
+            IDisplay display = new ConsoleDisplay();
+            if (!useEmulator)
+            {
+                display = new ArduinoDisplay();
+            }
 
             state = State.Title;
 
