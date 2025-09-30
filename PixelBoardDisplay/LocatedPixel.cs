@@ -20,22 +20,12 @@ namespace PixelBoard
 
         public override bool Equals(object obj)
         {
-            if(base.Equals(obj))
+            if (obj is LocatedPixel other)
             {
-                LocatedPixel other = (LocatedPixel)obj;
-                if (this.Column == other.Column && this.Row == other.Row)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return this.Column == other.Column && this.Row == other.Row;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
     }

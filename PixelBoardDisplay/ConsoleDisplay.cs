@@ -23,22 +23,23 @@ namespace PixelBoard
         /// </summary>
         public ConsoleDisplay()
         {
+            //this.dh.SetFramerate(50);
             initBoard();
             ElapsedEventHandler dtfr = drawToFramerate;
-            this.dh.makeTimer(dtfr);
+            this.dh.MakeTimer(dtfr);
         }
 
         /// <summary>
         /// Construct a display with a custom size and optional framerate
         /// </summary>
-        public ConsoleDisplay(sbyte height, sbyte width, sbyte framerate = 50)
+        public ConsoleDisplay(sbyte height, sbyte width, sbyte framerate = 60)
         {
             this.dh.SetFramerate(framerate);
             this.dh.SetSize(height, width);
             initBoard();
 
             ElapsedEventHandler dtfr = drawToFramerate;
-            this.dh.makeTimer(dtfr);
+            this.dh.MakeTimer(dtfr);
         }
 
         private void initBoard()

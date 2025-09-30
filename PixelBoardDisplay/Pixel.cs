@@ -23,26 +23,14 @@ namespace PixelBoard
 
         public override bool Equals(object obj)
         {
-            
+            if (obj is Pixel other)
+            {
+                return this.Red == other.Red &&
+                       this.Green == other.Green &&
+                       this.Blue == other.Blue;
+            }
 
-            if (obj == null || !typeof(IPixel).IsAssignableFrom(obj.GetType()))
-            {
-                return base.Equals(obj);
-            }
-            else
-            {
-                Type t = obj.GetType();
-                bool b = t.IsAssignableFrom(typeof(IPixel));
-                Pixel other = (Pixel)obj;
-                if (this.Red == other.Red && this.Green == other.Green && this.Blue == other.Blue)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+            return false;
         }
     }
 }

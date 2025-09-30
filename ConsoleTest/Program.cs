@@ -2,6 +2,7 @@
 using PixelBoard;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 
@@ -20,7 +21,7 @@ namespace SnakeGame
         public static IPixel[,] board = new IPixel[20, 10];
         public static IPixel[,] background = new IPixel[20, 10];
         //public static bool isInitialised = false;
-
+        private static float rainbowShift = 0f;
 
         static void Main(string[] args)
         {
@@ -32,9 +33,14 @@ namespace SnakeGame
 
             //ReadBMP("hello.txt", ref title);
 
+            IDisplay emulatorDisplay = new ConsoleDisplay();
+            IDisplay hardwareDisplay = new ArduinoDisplay();
 
-            IDisplay display = useEmulator ? new ConsoleDisplay() : new ArduinoDisplay();
+            // Then when drawing:
+
+
             IPixel[,] pixels = new IPixel[20, 10];
+
             Queue<(int x, int y)> snake = new Queue<(int x, int y)>();
             int snakeLength = 5;
             int headX = 10;
@@ -69,13 +75,18 @@ namespace SnakeGame
                     }
                     if (game == GameChoiceState.Snake)
                     {
+
+                        rainbowShift += 0.0001f; // frameCount should increment every frame
                         for (sbyte i = 0; i < 20; i++)
                         {
                             for (sbyte j = 0; j < 10; j++)
                             {
-                                pixels[i, j] = new Pixel(255, 30, 255);
+                                float hue = (rainbowShift + (i + j) * 0.05f) % 1f;
+                                Color color = ColorFromHSV(hue * 360, 1f, 1f);
+                                pixels[i, j] = new Pixel(color.R, color.G, color.B);
                             }
                         }
+
 
                         int[,] sShape = new int[,]
                         {
@@ -96,7 +107,7 @@ namespace SnakeGame
                             {
                                 if (sShape[y, x] == 1)
                                 {
-                                    pixels[offsetX + x, offsetY + y] = new Pixel(0, 0, 0); // Black pixel
+                                    pixels[offsetX + x, offsetY + y] = new Pixel(0, 0, 0); 
                                 }
                             }
                         }
@@ -175,10 +186,37 @@ namespace SnakeGame
                 {
                     Thread.Sleep(100);
 
+                    if (game == GameChoiceState.Tetris)
+                    {
+                        Color[] rainbowColors = new Color[]
+                        {
+                            Color.Red,
+                            Color.Orange,
+                            Color.Yellow,
+                            Color.Green,
+                            Color.Blue,
+                            Color.Indigo,
+                            Color.Violet
+                        };
+
+                        int frameOffset = Environment.TickCount / 100;
+
+                        for (int row = 0; row < board.GetLength(0); row++)
+                        {
+                            for (int col = 0; col < board.GetLength(1); col++)
+                            {
+                                int colorIndex = (row + col + frameOffset) % rainbowColors.Length;
+                                Color color = rainbowColors[colorIndex];
+
+                                board[row, col] = new Pixel(color.R, color.G, color.B); // Assuming Pixel implements IPixel
+                            }
+                        }
+                    }
                     // Snake setup
                     if (game == GameChoiceState.Snake) 
                     {
-                        display.DisplayInt(score);
+                        emulatorDisplay.DisplayInt(score);
+                        hardwareDisplay.DisplayInt(score);
                         // Check if snake eats food
                         if (headX == food.x && headY == food.y)
                         {
@@ -242,10 +280,33 @@ namespace SnakeGame
                    
 
                 }
-                display.Draw(pixels);
+                emulatorDisplay.Draw(pixels);
+                hardwareDisplay.Draw(pixels);
             }
             
         }
+        public static Color ColorFromHSV(double hue, double saturation, double value)
+        {
+            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+            double f = hue / 60 - Math.Floor(hue / 60);
+
+            value = value * 255;
+            int v = Convert.ToInt32(value);
+            int p = Convert.ToInt32(value * (1 - saturation));
+            int q = Convert.ToInt32(value * (1 - f * saturation));
+            int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
+
+            return hi switch
+            {
+                0 => Color.FromArgb(255, v, t, p),
+                1 => Color.FromArgb(255, q, v, p),
+                2 => Color.FromArgb(255, p, v, t),
+                3 => Color.FromArgb(255, p, q, v),
+                4 => Color.FromArgb(255, t, p, v),
+                _ => Color.FromArgb(255, v, p, q),
+            };
+        }
+
     }
 }
     

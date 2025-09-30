@@ -18,10 +18,13 @@ namespace PixelBoard
 
         public ArduinoDisplay()
         {
+            
             new ArduinoInput(SerialPortManager); // This line must be here to allow button presses
             initBoard();
             ElapsedEventHandler dtfr = drawToFramerate;
-            this.dh.makeTimer(dtfr);
+            this.dh.MakeTimer(dtfr);
+            this.dh.SetSize(20, 10);
+
         }
 
         public ArduinoDisplay(sbyte height, sbyte width, sbyte framerate = 50)
@@ -30,7 +33,7 @@ namespace PixelBoard
             this.dh.SetSize(height, width);
             initBoard();
             ElapsedEventHandler dtfr = drawToFramerate;
-            this.dh.makeTimer(dtfr);
+            this.dh.MakeTimer(dtfr);
         }
 
         private void initBoard()
@@ -50,6 +53,7 @@ namespace PixelBoard
             if (finishedStreaming)
             {
                 finishedStreaming = false;
+                this.dh.RefreshDisplay(this);
                 Pixel[,] toDraw = new Pixel[this.dh.height, this.dh.width];
                 Array.Copy(this.dh.currentBoard, toDraw, this.dh.currentBoard.Length);
 
