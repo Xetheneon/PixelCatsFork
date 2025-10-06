@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Timers;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Timers;
 
 namespace PixelBoard
 {
@@ -139,6 +140,7 @@ namespace PixelBoard
         /// </summary>
         internal void RefreshDisplay(IDisplay display)
         {
+            List<ILocatedPixel> changedPixels = new List<ILocatedPixel>();
             lock (boardLock)
             {
                 for (int row = 0; row < height; row++)
@@ -149,9 +151,9 @@ namespace PixelBoard
                         IPixel last = lastBoard[row, col];
 
                         if (current != null && last != null &&
-                             (current.Red != last.Red || current.Green != last.Green || current.Blue != last.Blue))
+                            (current.Red != last.Red || current.Green != last.Green || current.Blue != last.Blue))
                         {
-                            display.Draw(new LocatedPixel(
+                            changedPixels.Add(new LocatedPixel(
                                 current.Red, current.Green, current.Blue,
                                 (sbyte)col, (sbyte)row));
 
@@ -159,6 +161,10 @@ namespace PixelBoard
                         }
                     }
                 }
+            }
+            if (changedPixels.Count > 0)
+            {
+                display.DrawBatch(changedPixels);
             }
         }
     }

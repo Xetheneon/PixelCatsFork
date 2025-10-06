@@ -34,7 +34,7 @@ namespace SnakeGame
             //ReadBMP("hello.txt", ref title);
 
             IDisplay emulatorDisplay = new ConsoleDisplay();
-            IDisplay hardwareDisplay = new ArduinoDisplay();
+            //IDisplay hardwareDisplay = new ArduinoDisplay();
 
             // Then when drawing:
 
@@ -216,7 +216,7 @@ namespace SnakeGame
                     if (game == GameChoiceState.Snake) 
                     {
                         emulatorDisplay.DisplayInt(score);
-                        hardwareDisplay.DisplayInt(score);
+                       // hardwareDisplay.DisplayInt(score);
                         // Check if snake eats food
                         if (headX == food.x && headY == food.y)
                         {
@@ -281,7 +281,7 @@ namespace SnakeGame
 
                 }
                 emulatorDisplay.Draw(pixels);
-                hardwareDisplay.Draw(pixels);
+                //hardwareDisplay.Draw(pixels);
             }
             
         }

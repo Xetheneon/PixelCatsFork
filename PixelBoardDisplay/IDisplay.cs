@@ -40,5 +40,7 @@ namespace PixelBoard
         /// <param name="leftValue">Left 3 digits (left aligned)</param>
         /// <param name="rightValue">Right 3 digits (right aligned)</param>
         void DisplayInts(int leftValue, int rightValue);
+
+        void DrawBatch(IEnumerable<ILocatedPixel> pixels);
     }
 }

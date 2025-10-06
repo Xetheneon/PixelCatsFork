@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
@@ -41,7 +42,13 @@ namespace PixelBoard
             ElapsedEventHandler dtfr = drawToFramerate;
             this.dh.MakeTimer(dtfr);
         }
-
+        public void DrawBatch(IEnumerable<ILocatedPixel> pixels)
+        {
+            foreach (var pixel in pixels)
+            {
+                Draw(pixel);
+            }
+        }
         private void initBoard()
         {
             this.dh.currentBoard = new Pixel[this.dh.height, this.dh.width];
