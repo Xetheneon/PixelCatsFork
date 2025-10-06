@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
     class IDisplay {
         <<interface>>
@@ -32,3 +33,4 @@ classDiagram
     ArduinoDisplay ..|> IDisplay
     ArduinoDisplay o-- DisplayHelper
     ArduinoDisplay o-- SerialPortManager
+```
