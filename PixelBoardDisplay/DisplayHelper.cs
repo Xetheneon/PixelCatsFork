@@ -11,7 +11,7 @@ namespace PixelBoard
         internal sbyte height = 20;
         internal sbyte width = 10;
         internal sbyte framerate = 10;
-
+        private volatile bool boardDirty = false;
         internal static System.Timers.Timer displayRefreshTimer;
         private readonly object boardLock = new object();
 
@@ -73,6 +73,7 @@ namespace PixelBoard
                     }
                 }
             }
+            boardDirty = true;
         }
 
         internal void Draw(ILocatedPixel pixel)
@@ -84,6 +85,7 @@ namespace PixelBoard
             {
                 this.currentBoard[pixel.Row, pixel.Column] = (IPixel)pixel;
             }
+            boardDirty = true;
         }
 
         internal void DisplayInt(int value)
@@ -140,6 +142,7 @@ namespace PixelBoard
         /// </summary>
         internal void RefreshDisplay(IDisplay display)
         {
+            if (!boardDirty) return;
             List<ILocatedPixel> changedPixels = new List<ILocatedPixel>();
             lock (boardLock)
             {
@@ -166,6 +169,7 @@ namespace PixelBoard
             {
                 display.DrawBatch(changedPixels);
             }
+            boardDirty = false;
         }
     }
 }

@@ -37,23 +37,21 @@ namespace PixelBoard
         }
         public void DrawBatch(IEnumerable<ILocatedPixel> pixels)
         {
-            // Example: send all pixel data in one go (efficient for serial or similar)
-            // You may want to build a byte array and send it via SerialPortManager.SerialPort.
+           
             List<byte> buffer = new List<byte>();
 
             foreach (var pixel in pixels)
             {
-                // Pack the column, row, and color values
+                
                 buffer.Add((byte)pixel.Column);
                 buffer.Add((byte)pixel.Row);
                 buffer.Add(pixel.Red);
                 buffer.Add(pixel.Green);
                 buffer.Add(pixel.Blue);
 
-                // Optionally: you could use a protocol header/footer, if needed
+                
             }
 
-            // Send buffer to Arduino in one write (if protocol allows)
             if (buffer.Count > 0)
             {
                 SerialPortManager.SerialPort.Write(buffer.ToArray(), 0, buffer.Count);
