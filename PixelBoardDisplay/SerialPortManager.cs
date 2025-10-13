@@ -18,8 +18,8 @@ namespace PixelBoard
                 try
                 {
                     serialPort.PortName = "COM3";
-                    serialPort.BaudRate = 115200;
-                    serialPort.WriteBufferSize = 64;
+                    serialPort.BaudRate = 1000000;
+                   // serialPort.WriteBufferSize = 64;
                     serialPort.Open();
                 }
                 catch (UnauthorizedAccessException e)

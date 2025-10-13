@@ -80,8 +80,6 @@ namespace PixelBoard
 
                 byte[] stream = new byte[600];
 
-                bool changed = false;
-
                 int counter = 0;
                 for (sbyte i = 0; i < this.dh.height; i++)
                 {
@@ -92,10 +90,8 @@ namespace PixelBoard
                             stream[counter] = toDraw[Math.Abs(i - dh.height + 1), j].Red;
                             stream[counter + 1] = toDraw[Math.Abs(i - dh.height + 1), j].Green;
                             stream[counter + 2] = toDraw[Math.Abs(i - dh.height + 1), j].Blue;
-                            counter = counter + 3;
-                            changed = true;
-
                         }
+                        counter += 3;
                     }
                 }
 
@@ -104,38 +100,30 @@ namespace PixelBoard
                     string outScore = this.dh.currentLCDNumber;
                     this.dh.lastLCDNumber = outScore;
 
-                    string paddedNum = outScore.ToString();
-                    if (paddedNum.Length < 6)
-                    {
-                        for (int i = 0; i < 6 - outScore.ToString().Length; i++)
-                        {
-                            paddedNum.Insert(0, " ");
-                        }
-
-                    }
+                    // Proper left-pad to 6 chars
+                    string paddedNum = outScore.PadLeft(6, ' ');
 
                     byte[] LCDbytes = new byte[6];
                     char[] intAsCharArray = paddedNum.ToCharArray();
 
-                    int count = 0;
-                    foreach (char c in intAsCharArray)
+                    for (int i = 0; i < 6; i++)
                     {
-                        LCDbytes[count] = Convert.ToByte(c);
-                        count++;
+                        LCDbytes[i] = Convert.ToByte(intAsCharArray[i]);
                     }
 
-                    char[] delimiter = new char[1] { 's' };
-                    SerialPortManager.SerialPort.Write(delimiter, 0, 1);
+                    // Add sync marker
+                    byte[] syncMarker = new byte[] { 0xAA, 0x55 };
+
+                    SerialPortManager.SerialPort.Write(syncMarker, 0, syncMarker.Length);
                     SerialPortManager.SerialPort.Write(LCDbytes, 0, 6);
                     SerialPortManager.SerialPort.Write(stream, 0, 600);
                 }
-                else if(streamMode == "partial")
+                else if (streamMode == "partial")
                 {
                     // TODO: Send partial update
                 }
                 finishedStreaming = true;
             }
-
         }
 
         public void DisplayInt(int value)
