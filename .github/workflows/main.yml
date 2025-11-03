@@ -15,11 +15,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      - name: Configure git author
-        shell: pwsh
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+     
 
       - name: Push to Azure Repos (PowerShell)
         shell: pwsh
