@@ -17,23 +17,33 @@ jobs:
 
      
 
-      - name: Push to Azure Repos (PowerShell)
-        shell: pwsh
+      - name: Push master -> PeerReviewBranch on Azure Repos
         env:
-          AZDO_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+          AZDO_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}   # <- ensure this secret exists
         run: |
-          if (-not $env:AZDO_PAT) { throw "AZURE_DEVOPS_PAT secret not set." }
-          $azdoPat = $env:AZDO_PAT
-          # Use https if your server supports it. If only http is available, change https:// to http://
-          $url = "https://x:$($azdoPat)@cdp-devops.net.dcs.hull.ac.uk/CDPProjects/2526%20-%20Pixel%20Cats/_git/PixelCats"
-          if (-not (git show-ref --verify --quiet "refs/heads/PeerReiewBranch")) {
-            Write-Error "Local branch 'PeerReiewBranch' not found. Create or fetch it before pushing."
-            git branch -a
-            exit 2
-          }
-          if (-not (git remote get-url azure 2>$null)) {
-            git remote add azure $url
-          } else {
-            git remote set-url azure $url
-          }
-          git push azure "refs/heads/PeerReiewBranch:refs/heads/PeerReiewBranch" --follow-tags
+          set -euo pipefail
+
+          if [ -z "${AZDO_PAT:-}" ]; then
+            echo "Error: AZURE_DEVOPS_PAT secret is not set" >&2
+            exit 1
+          fi
+
+          # If your Azure DevOps server supports HTTPS use https://, otherwise change to http:// (note: HTTP is unencrypted)
+          AZDO_URL="https://x:${AZDO_PAT}@cdp-devops.net.dcs.hull.ac.uk/CDPProjects/2526%20-%20Pixel%20Cats/_git/PixelCats"
+
+          SRC_BRANCH="master"
+          TGT_BRANCH="PeerReviewBranch"
+
+          # Ensure a local branch named master exists and points at the current commit (works even if checkout is detached)
+          git checkout -B "${SRC_BRANCH}"
+
+          # Add or update the azure remote
+          if ! git remote get-url azure >/dev/null 2>&1; then
+            git remote add azure "${AZDO_URL}"
+          else
+            git remote set-url azure "${AZDO_URL}"
+          fi
+
+          # Push master (local) to PeerReviewBranch (remote)
+          git push azure "refs/heads/${SRC_BRANCH}:refs/heads/${TGT_BRANCH}" --follow-tags
+        shell: bash
