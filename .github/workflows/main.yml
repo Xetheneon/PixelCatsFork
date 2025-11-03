@@ -1,26 +1,43 @@
-name: Push to Azure Repos
+name: Push to Azure Repos (Windows runner)
 
 on:
   push:
     branches:
-      - master   # change as needed
+      - master
 
 jobs:
   push-to-azure:
-    runs-on: self-hosted  # change label to match your runner
+    runs-on: [self-hosted, windows, your-runner-label]  # <- replace with your runner labels
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false 
+          persist-credentials: false
+          fetch-depth: 0
 
-      - name: Push to Azure Repos
+      - name: Configure git author
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push to Azure Repos (PowerShell)
+        shell: pwsh
         env:
           AZDO_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
-          # Replace ORG/PROJECT/REPO with your Azure DevOps values
-          AZDO_URL="https://x:${AZDO_PAT}@dev.azure.com/ORG/PROJECT/_git/REPO"
-          git remote add azure "${AZDO_URL}" || git remote set-url azure "${AZDO_URL}"
-          BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          git push azure "refs/heads/${BRANCH}:refs/heads/${BRANCH}" --follow-tags
-        shell: bash
+          if (-not $env:AZDO_PAT) { throw "AZURE_DEVOPS_PAT secret not set." }
+          $azdoPat = $env:AZDO_PAT
+          # Use https if your server supports it. If only http is available, change https:// to http://
+          $url = "https://x:$($azdoPat)@cdp-devops.net.dcs.hull.ac.uk/CDPProjects/2526%20-%20Pixel%20Cats/_git/PixelCats"
+          if (-not (git show-ref --verify --quiet "refs/heads/PeerReiewBranch")) {
+            Write-Error "Local branch 'PeerReiewBranch' not found. Create or fetch it before pushing."
+            git branch -a
+            exit 2
+          }
+          if (-not (git remote get-url azure 2>$null)) {
+            git remote add azure $url
+          } else {
+            git remote set-url azure $url
+          }
+          git push azure "refs/heads/PeerReiewBranch:refs/heads/PeerReiewBranch" --follow-tags
