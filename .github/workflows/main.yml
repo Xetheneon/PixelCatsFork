@@ -7,7 +7,7 @@ on:
 
 jobs:
   push-master-to-peerreview:
-    runs-on: self-hosted   
+    runs-on: self-hosted
     steps:
       - name: Checkout master
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
       - name: Push master -> PeerReviewBranch on Azure Repos (cmd)
         shell: cmd
         env:
-          AZDO_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}   # create this repository secret with the PAT (Code: Read & write)
+          AZDO_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
           rem fail fast if secret missing
           if "%AZDO_PAT%"=="" (
@@ -39,8 +39,8 @@ jobs:
           set "SRC_BRANCH=master"
           set "TGT_BRANCH=PeerReviewBranch"
 
-          rem NOTE: in cmd.exe percent signs must be doubled to preserve %20 in URLs
-          set "AZDO_URL=https://x:%AZDO_PAT%@cdp-devops.net.dcs.hull.ac.uk/CDPProjects/2526%%20-%%20Pixel%%20Cats/_git/PixelCats"
+          rem NOTE: percent signs doubled to keep %20 in URL literal in cmd.exe
+          set "AZDO_URL=http://x:%AZDO_PAT%@cdp-devops.net.dcs.hull.ac.uk/CDPProjects/2526%%20-%%20Pixel%%20Cats/_git/PixelCats"
 
           rem ensure local branch exists (checkout above should have done this)
           git rev-parse --verify %SRC_BRANCH% >nul 2>&1
