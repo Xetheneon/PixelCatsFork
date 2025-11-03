@@ -3,7 +3,7 @@ name: Push to Azure Repos
 on:
   push:
     branches:
-      - main   # change as needed
+      - master   # change as needed
 
 jobs:
   push-to-azure:
