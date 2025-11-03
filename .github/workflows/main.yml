@@ -1,0 +1,31 @@
+name: Push to Azure Repos
+
+on:
+  push:
+    branches:
+      - main   # change as needed
+
+jobs:
+  push-to-azure:
+    runs-on: self-hosted  # change label to match your runner
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push to Azure Repos
+        env:
+          AZDO_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: |
+          # Replace ORG/PROJECT/REPO with your Azure DevOps values
+          AZDO_URL="https://x:${AZDO_PAT}@dev.azure.com/ORG/PROJECT/_git/REPO"
+          git remote add azure "${AZDO_URL}" || git remote set-url azure "${AZDO_URL}"
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          git push azure "refs/heads/${BRANCH}:refs/heads/${BRANCH}" --follow-tags
+        shell: bash
