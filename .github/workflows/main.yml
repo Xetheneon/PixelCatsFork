@@ -7,7 +7,7 @@ on:
 
 jobs:
   push-to-azure:
-    runs-on: [self-hosted, windows, your-runner-label]  # <- replace with your runner labels
+    runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
