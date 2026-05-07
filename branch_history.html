@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Git Branch History</title>
+<style>
+body {
+    margin: 0;
+    background: #020617;
+    color: #e5e7eb;
+    font-family: Arial, sans-serif;
+}
+
+.page {
+    padding: 40px;
+}
+
+.header {
+    margin-bottom: 28px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin-top: 8px;
+}
+
+.graph-box {
+    background: #050816;
+    border: 1px solid #1e293b;
+    border-radius: 14px;
+    padding: 24px;
+    overflow-x: auto;
+}
+
+pre {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: pre;
+    margin: 0;
+}
+
+.footer {
+    margin-top: 24px;
+    color: #64748b;
+    font-size: 12px;
+}
+</style>
+</head>
+<body>
+<div class="page">
+    <div class="header">
+        <h1>Git Branch History</h1>
+        <div class="subtitle">Visual commit graph generated from all branches</div>
+    </div>
+
+    <div class="graph-box">
+        <pre>* 634b4ae Added evidence pack Chubie.Mirembe  (HEAD -&gt; master, origin/master, origin/HEAD)
+* 0a878e4 updated the tutorial Chubie.Mirembe 
+* a271df2 updated the folder layout to match current version of the repo Chubie.Mirembe 
+*   f01a091 resolving merge conflicts with testing Chubie.Mirembe  (origin/PeerReviewBranch)
+|\  
+| * 0a410ba generating test reports Chubie.Mirembe  (origin/Testing)
+| * b5e65c9 fixing the warnings in github actions Chubie.Mirembe 
+| * 2a15095 tests written, but i dont know if its working Chubie.Mirembe 
+| *   3cfd5e7 Merge pull request #5 from Xetheneon/PeerReviewBranch George Morter 
+| |\  
+| * \   d950d30 Merge pull request #4 from Xetheneon/PeerReviewBranch George Morter 
+| |\ \  
+| * \ \   55f3d24 Merge pull request #3 from Xetheneon/PeerReviewBranch George Morter 
+| |\ \ \  
+| * | | | a5dc276 Fix formatting issues in GitHub Actions workflow George Morter 
+| * | | | 466b9cb Update workflow to use Windows cmd for Azure push George Morter 
+| * | | | 2638412 Update GitHub Actions workflow for Azure Repos George Morter 
+| * | | | c4f6f94 Refactor Azure Repos push step to use bash George Morter 
+| * | | | 31b55f6 Remove git author configuration from main.yml George Morter 
+| * | | | a872361 Update main.yml George Morter 
+| * | | | 28cd2f2 Modify GitHub Actions workflow for Azure Repos George Morter 
+| * | | | 9861c37 Update main.yml George Morter 
+| * | | | 29c03bc Change default branch from &#x27;main&#x27; to &#x27;master&#x27; George Morter 
+| * | | | 2f2547e Add GitHub Actions workflow for Azure Repos push George Morter 
+* | | | | 59ace57 included folder layout Chubie.Mirembe 
+* | | | | 0989e41 modified the scoring system to match what was on the arduino Chubie.Mirembe 
+| |_|_|/  
+|/| | |   
+* | | | 3598f6e trying to get score to fade by thousands like in standalone on arduino George Morter 
+* | | | 29795f6 fixed buffer filling problem with holding keys George Morter 
+* | | | e24170f removed head and tail from s and z blocks to make it look more like the actual block George Morter 
+* | | | 3bf6c0f cleaned up some random comments and removed code that wasnt needed anymore George Morter 
+* | | | 3e65ed9 got the c# to send over the correct segments to the board, as well as displays text and alt codes in the eumlator to show what the hold and next blocks are. George Morter 
+* | | | 8e979be got per game env vars working and scores now post correctly if an env var is detected George Morter 
+* | | | 75b318a got board working to display game and also send score number too (and implemented multiple button input recognition) George Morter 
+* | | | e8f3d6d this works with esp32 now George Morter 
+* | | | ec81665 Chubie fixed the problems regaring payload and such to make sure the esp module can read the data sent George Morter 
+* | | | 4fd7fc9 working on getting esp32 to work with the c# code George Morter 
+* | | | a7c4b1e put the right snake code in George Morter 
+* | | | d20ddb7 working on implementing hmac (seems to have worked) George Morter 
+* | | | 4818b27 changes George Morter 
+* | | | 4e7630a making client look better George Morter 
+* | | | 3c1596b updated game and client to do game id George Morter 
+* | | | 260a076 implemented game asking for code from server (through the api). Had to update games to incorporate this since async was needed and the file writes were happening too soon (code wasnt retrieved yet) -- delay of three seconds currently George Morter 
+* | | | 437653b updated client George Morter 
+* | | | 030725f Add dotnet-mgcb tool manifest George Morter 
+* | | | 948d6f8 trying to fix monogame client George Morter 
+* | | | 44eb5da updated score watcher and game1 to get game name and diplsay instead of time stamp George Morter 
+* | | | 3437e0a Working on Monogame app for the client to make it look nicer George Morter 
+| |_|/  
+|/| |   
+* | | 59f726f workflow test 6 Chubie.Mirembe 
+* | | 55dad10 workflow test 5 Chubie.Mirembe 
+* | | 0715117 workflow test 4 Chubie.Mirembe 
+* | | 7e090ae workflow test - no warnings Chubie.Mirembe 
+* | | 263c010 disabled warnings being treated as erros Chubie.Mirembe 
+* | | 3ff5c03 created the workflow - i dont know if it works Chubie.Mirembe 
+* | | 7e95e31 API client test works - just need to get it to work with every commit Chubie.Mirembe 
+* | | 4f6ab1a regression test for new games Chubie.Mirembe 
+* | | 9f36a89 snake tutorial Chubie.Mirembe 
+* | | 3ecf2a6 enabled hardware George Morter 
+* | |   1dd67e0 Merge branch &#x27;PeerReviewBranch&#x27; of https://github.com/Xetheneon/PixelCatsFork into PeerReviewBranch George Morter 
+|\ \ \  
+| * \ \   6685d2e educations Chubie.Mirembe 
+| |\ \ \  
+| * | | | 3103e23 education game Chubie.Mirembe 
+* | | | | 74b2305 fixed client George Morter 
+| |/ / /  
+|/| | |   
+* | | | 7023e94 working on game name to send with code to leaderaboard George Morter 
+* | | | e5b12e4 trying to do game ident George Morter 
+|/ / /  
+* | | d51b95a return to title page Chubie.Mirembe 
+* | | d37bdbb code on int display Chubie.Mirembe 
+* | | 67a69fe updated program George Morter 
+* | | 96c9770 updated snake George Morter 
+* | |   3ae8bda merge George Morter 
+|\ \ \  
+| * | | 97008ff snake game update: - self collision - speeds up the longer you playe - deadly walls (optional) Chubie.Mirembe 
+| * | | 3abafad tetris fully working, with correct scoring system Chubie.Mirembe 
+| * | |   b1e40c4 Merge branch &#x27;PeerReviewBranch&#x27; of https://github.com/Xetheneon/PixelCatsFork into PeerReviewBranch Chubie.Mirembe 
+| |\ \ \  
+| * | | | 011ee27 working on tutorial and changed the namespace for each file Chubie.Mirembe 
+| | |_|/  
+| |/| |   
+* | | | 1e9f917 working on score and stuff George Morter 
+| |/ /  
+|/| |   
+* | | 178620b fixed score stuff and got working so that game sends score to the file which is pushed to the website George Morter 
+* | | f525372 added in client George Morter 
+* | | 196544e program ready for score system George Morter 
+|/ /  
+* / 1b0064f Games reafctored, snake and tetris working Chubie.Mirembe 
+|/  
+* fc123d6 working on fixing framerate George Morter 
+* b797d23 Update README.md to remove project description George Morter 
+* ecf16ef Enhance README with class diagrams for PixelBoard George Morter 
+* b41d065 Delete ArduinoDisplayClassDiagram.md George Morter 
+* 3bb0593 Add mermaid class diagram to README George Morter 
+* b2bb185 Readme for mermaid to show at bottom GEORGE MORTER 
+* e5e8788 mermaid? GEORGE MORTER 
+* e294667 updated for better refresh and update GEORGE MORTER 
+* 987548e doing stuff George Morter 
+* 9ac1e38 added main menu, snake and other stuff GEORGE MORTER 
+* 4decc88 push to fork GEORGE MORTER 
+* 06c7dcf updated to .NET 9 and added a configuration file for using the emulator console or not. DavidParkerDr 
+* 1bbd002 Updated to newer version of .Net Core DavidParkerDr 
+*   141be45 Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 John Dixon 
+|\  
+| *   899a2ac Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 349628 
+| |\  
+| * | 8d7282b Fixed bug where fallers don&#x27;t draw on top row 349628 
+* | | 2180e5b Always draw bat John Dixon 
+| |/  
+|/|   
+* | d342e89 Reduced framerate to 10 John Dixon 
+|/  
+*   c6e0894 Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 349628 
+|\  
+| *   ddc81ed Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 John Dixon 
+| |\  
+| | * 2c9541d fixed falling bug DavidParkerDr 
+| * | b0d108e Testing flashing John Dixon 
+| |/  
+| *   d3da4d4 Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 John Dixon 
+| |\  
+| * | 19fd2dd Score sent as string John Dixon 
+* | | 3947911 Updated gameover with darker face 349628 
+| |/  
+|/|   
+* | 6ca300b Updated game over screen 349628 
+* | edbd956 Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 349628 
+|\| 
+| *   709cc72 Merge buttons John Dixon 
+| |\  
+| * | 3aac06e Buttons! John Dixon 
+* | | 71635e2 Mitigated updating bug or something - don&#x27;t know why it works 349628 
+| |/  
+|/|   
+* | 732eadc Slowed down cat movement 349628 
+* | 64706d5 Changed bottom two rows to black 349628 
+* | a97c1f5 Set starting state to title 349628 
+* | dc0ec4d Kept all my stuff. John is a smelly poo 349628 
+|\| 
+| *   a3d62b2 Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 John Dixon 
+| |\  
+| * | 8d1ed15 Simon is mean today John Dixon 
+* | | d3f1c3f Added awesome title screen and game over screen and the functionality to change state with button presses 349628 
+| |/  
+|/|   
+* | 8df8019 Merge branch &#x27;master&#x27; of https://github.com/DavidParkerDr/TTGNov19 349628 
+|\| 
+| * 4146afa Mod back to console John Dixon 
+| *   83e1c21 only 10. No more John Dixon 
+| |\  
+| * | 6f326ba Hmm... refresh rate?? John Dixon 
+* | | 2b53540 Made backgroudn dull and added constrast for falling things 349628 
+| |/  
+|/|   
+* | b89a2c1 Added some sort of potential title screen 349628 
+* | 4a0f85b Added display for lives as well as score 349628 
+|/  
+* 9b3e298 Changed to sending chars to Arduino, corrected number output for console. John Dixon 
+* a92cd0f Fixed error with lasers going through falling things. This was caused because collisions were only checked when lasers moved - so fallers moving could create a tunnelling effect. The fix was to refactor the collision code out of lasers moving and call it both when fallers move as well as when lasers move. 349628 
+* 0e88ec7 Made colour of falling things to the colour of another column 349628 
+* becb486 Made the game mostly yeah okay - good message 349628 
+* 95c6db0 Refactored displays into helper class. Arduino Display added. John Dixon 
+* e70b9b5 Some additional efficiency in draw and LCD/locatedPixel support John Dixon 
+* 57d1ebc Console Emulator basics and test program John Dixon 
+* f7a47b7 Class name change John Dixon 
+* de6c43c Interfaces John Dixon </pre>
+    </div>
+
+    <div class="footer">
+        Generated on 07 May 2026, 14:28
+    </div>
+</div>
+</body>
+</html>
