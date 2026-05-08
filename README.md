@@ -4,13 +4,13 @@
 
 Use this quick map to find the main entry points in the repo:
 
-- `PixelGame.sln` — open this solution to load all primary projects.
-- `PixelBoardDisplay/` — shared display/input abstractions and board integration code.
-- `ConsoleTest/` — console-hosted game runner and game implementations.
-- `ConsoleTest.Tests/` — unit tests for console/game and API client behavior.
-- `HerdingCats/` — standalone game project.
-- `PixelCatsClient/` and `Client/` — Client applications.
-- `shared/latest_score.json` — shared score output consumed by parts of the solution.
+- `PixelGame.sln` â€” open this solution to load all primary projects.
+- `PixelBoardDisplay/` â€” shared display/input abstractions and board integration code.
+- `ConsoleTest/` â€” console-hosted game runner and game implementations.
+- `ConsoleTest.Tests/` â€” unit tests for console/game and API client behavior.
+- `HerdingCats/` â€” standalone game project.
+- `PixelCatsClient/` and `Client/` â€” client applications.
+- `shared/latest_score.json` â€” shared score output consumed by parts of the solution.
 
 ### Quick start by goal
 
@@ -35,30 +35,40 @@ dotnet run --project ConsoleTest/ConsoleTest.csproj
 dotnet test
 ```
 
-## Configuration (ConsoleTest)
+## Configuration
 
 `ConsoleTest` loads configuration from `appsettings.json` (optional) and environment variables.
 
-- `UseEmulator` (bool) – defaults to `true`
-- `Leaderboard:BaseUrl` (string) – defaults to `http://127.0.0.1:3000`
-  - environment variable form: `Leaderboard__BaseUrl`
-- HMAC secrets (strings):
+- `UseEmulator` (bool) â€” defaults to `true`
+- `Leaderboard:BaseUrl` (string) â€” defaults to `http://127.0.0.1:3000`
+  - Environment variable form: `Leaderboard__BaseUrl`
+- HMAC secrets:
   - `LEADERBOARD_HMAC_SNAKE`
   - `LEADERBOARD_HMAC_TETRIS`
   - `LEADERBOARD_HMAC_EDU`
 
-Score export:
+## Score export
 
-- `ConsoleTest` writes `shared/latest_score.json` (relative to the repo root when possible).
+`ConsoleTest` writes to:
 
-## Adding a new game (ConsoleTest)
+```text
+shared/latest_score.json
+```
 
-- Implement `ConsoleTest/Games/IGame.cs`
-- Register the game in `ConsoleTest/Program.cs` (the `games` dictionary)
+This path is relative to the repository root when possible.
+
+## Adding a new game
+
+To add a new game in `ConsoleTest`:
+
+1. Implement `ConsoleTest/Games/IGame.cs`.
+2. Register the game in `ConsoleTest/Program.cs` inside the `games` dictionary.
 
 ---
 
-Below are class diagrams (in Mermaid format) for all major classes and interfaces in the **PixelBoard** project.  
+## Class diagrams
+
+Below are class diagrams, in Mermaid format, for the major classes and interfaces in the PixelBoard project.
 
 ---
 
@@ -126,6 +136,7 @@ classDiagram
         -void ButtonThread()
         +delegate void ButtonEventHandler(object, ArduinoButtonEventArgs)
     }
+
     class SerialPortManager
 
     ArduinoInput o-- SerialPortManager
@@ -256,6 +267,7 @@ classDiagram
         +sbyte Column
         +sbyte Row
     }
+
     class IPixel
 
     ILocatedPixel ..|> IPixel
@@ -289,10 +301,11 @@ classDiagram
         +LocatedPixel(byte, byte, byte, sbyte, sbyte)
         +bool Equals(object)
     }
+
     class Pixel
     class ILocatedPixel
 
-    LocatedPixel ..|> Pixel
+    LocatedPixel --|> Pixel
     LocatedPixel ..|> ILocatedPixel
 ```
 
@@ -312,6 +325,7 @@ classDiagram
         +Pixel(byte, byte, byte)
         +bool Equals(object)
     }
+
     class IPixel
 
     Pixel ..|> IPixel
@@ -328,6 +342,7 @@ classDiagram
         +SerialPort SerialPort
         +SerialPortManager()
     }
+
     class SerialPort
 
     SerialPortManager o-- SerialPort
